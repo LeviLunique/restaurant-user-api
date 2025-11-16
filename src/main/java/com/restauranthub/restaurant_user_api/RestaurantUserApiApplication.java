@@ -1,0 +1,13 @@
+package com.restauranthub.restaurant_user_api;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class RestaurantUserApiApplication {
+
+	public static void main(String[] args) {
+		SpringApplication.run(RestaurantUserApiApplication.class, args);
+	}
+
+}
