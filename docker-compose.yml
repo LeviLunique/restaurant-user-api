@@ -1,0 +1,43 @@
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: restauranthub-db
+    environment:
+      POSTGRES_DB: ${DB_NAME:-restauranthubdb}
+      POSTGRES_USER: ${DB_USER:-restauranthub}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-restaurantpwd}
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - restauranthub-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-restauranthub} -d ${DB_NAME:-restauranthubdb}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: restauranthub-app
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/${DB_NAME:-restauranthubdb}
+      SPRING_DATASOURCE_USERNAME: ${DB_USER:-restauranthub}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD:-restaurantpwd}
+    ports:
+      - "8080:8080"
+    networks:
+      - restauranthub-network
+
+volumes:
+  postgres_data:
+
+networks:
+  restauranthub-network:
+    driver: bridge
