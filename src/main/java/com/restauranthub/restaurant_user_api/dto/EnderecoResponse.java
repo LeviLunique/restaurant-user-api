@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import java.time.OffsetDateTime;
 
 @Data
 @Builder
@@ -22,4 +23,6 @@ public class EnderecoResponse {
     private String cep;
     private Boolean principal;
     private Boolean ativo;
+    private OffsetDateTime createdAt;
+    private OffsetDateTime updatedAt;
 }
