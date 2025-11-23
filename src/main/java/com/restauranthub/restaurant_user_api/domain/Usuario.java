@@ -1,13 +1,14 @@
 package com.restauranthub.restaurant_user_api.domain;
 
-import com.restauranthub.restaurant_user_api.domain.enums.TipoUsuario;
-import com.restauranthub.restaurant_user_api.exceptions.DomainValidationException;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import java.util.regex.Pattern;
+
+import com.restauranthub.restaurant_user_api.domain.enums.TipoUsuario;
+import com.restauranthub.restaurant_user_api.exceptions.DomainValidationException;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -41,8 +42,7 @@ public class Usuario {
             String senha,
             TipoUsuario tipoUsuario,
             String telefone,
-            List<Endereco> enderecos
-    ) {
+            List<Endereco> enderecos) {
         Usuario u = new Usuario();
         u.setNome(nome);
         u.setEmail(email);
@@ -62,14 +62,19 @@ public class Usuario {
             String login,
             String telefone,
             TipoUsuario tipoUsuario,
-            List<Endereco> novosEnderecos
-    ) {
-        if (nome != null) this.setNome(nome);
-        if (email != null) this.setEmail(email);
-        if (login != null) this.setLogin(login);
-        if (telefone != null) this.setTelefone(telefone);
-        if (tipoUsuario != null) this.setTipoUsuario(tipoUsuario);
-        if (novosEnderecos != null) this.replaceEnderecos(novosEnderecos);
+            List<Endereco> novosEnderecos) {
+        if (nome != null)
+            this.setNome(nome);
+        if (email != null)
+            this.setEmail(email);
+        if (login != null)
+            this.setLogin(login);
+        if (telefone != null)
+            this.setTelefone(telefone);
+        if (tipoUsuario != null)
+            this.setTipoUsuario(tipoUsuario);
+        if (novosEnderecos != null)
+            this.replaceEnderecos(novosEnderecos);
         validateState();
     }
 
@@ -101,9 +106,9 @@ public class Usuario {
         if (novosEnderecos == null || novosEnderecos.isEmpty()) {
             throw new DomainValidationException("ao menos um endereço deve ser informado");
         }
-        // valida cada endereço individualmente
+
         novosEnderecos.forEach(Endereco::validateState);
-        // garante principal único entre endereços ativos
+
         long principalAtivos = novosEnderecos.stream()
                 .filter(e -> Boolean.TRUE.equals(e.getAtivo()))
                 .filter(e -> Boolean.TRUE.equals(e.getPrincipal()))
@@ -115,16 +120,20 @@ public class Usuario {
     }
 
     private void validateState() {
-        if (isBlank(nome)) throw new DomainValidationException("nome é obrigatório");
-        if (isBlank(email)) throw new DomainValidationException("email é obrigatório");
+        if (isBlank(nome))
+            throw new DomainValidationException("nome é obrigatório");
+        if (isBlank(email))
+            throw new DomainValidationException("email é obrigatório");
         if (!EMAIL_PATTERN.matcher(email).matches()) {
             throw new DomainValidationException("email inválido");
         }
-        if (isBlank(login)) throw new DomainValidationException("login é obrigatório");
+        if (isBlank(login))
+            throw new DomainValidationException("login é obrigatório");
         if (!LOGIN_PATTERN.matcher(login).matches()) {
             throw new DomainValidationException("login inválido");
         }
-        if (isBlank(senha)) throw new DomainValidationException("senha é obrigatória");
+        if (isBlank(senha))
+            throw new DomainValidationException("senha é obrigatória");
         if (senha.length() < 8 || senha.length() > 72) {
             throw new DomainValidationException("senha deve ter entre 8 e 72 caracteres");
         }
@@ -134,7 +143,7 @@ public class Usuario {
         if (enderecos == null || enderecos.isEmpty()) {
             throw new DomainValidationException("ao menos um endereço deve ser informado");
         }
-        // valida redundância: principal único entre ativos
+
         long principalAtivos = enderecos.stream()
                 .filter(e -> Boolean.TRUE.equals(e.getAtivo()))
                 .filter(e -> Boolean.TRUE.equals(e.getPrincipal()))
@@ -142,7 +151,8 @@ public class Usuario {
         if (principalAtivos != 1) {
             throw new DomainValidationException("exatamente um endereço principal ativo deve ser informado");
         }
-        if (ativo == null) ativo = Boolean.TRUE;
+        if (ativo == null)
+            ativo = Boolean.TRUE;
     }
 
     private boolean isBlank(String value) {
