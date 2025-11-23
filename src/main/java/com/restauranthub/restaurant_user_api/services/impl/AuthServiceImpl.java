@@ -1,5 +1,6 @@
 package com.restauranthub.restaurant_user_api.services.impl;
 
+import com.restauranthub.restaurant_user_api.config.security.JwtService;
 import com.restauranthub.restaurant_user_api.dto.LoginRequest;
 import com.restauranthub.restaurant_user_api.dto.LoginResponse;
 import com.restauranthub.restaurant_user_api.dto.UsuarioResumoResponse;
@@ -9,8 +10,11 @@ import com.restauranthub.restaurant_user_api.exceptions.ResourceNotFoundExceptio
 import com.restauranthub.restaurant_user_api.mappers.UsuarioMapper;
 import com.restauranthub.restaurant_user_api.repositories.UsuarioRepository;
 import com.restauranthub.restaurant_user_api.services.AuthService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,11 +23,15 @@ public class AuthServiceImpl implements AuthService {
 
     private final UsuarioRepository repository;
     private final UsuarioMapper mapper;
-    private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    private final JwtService jwtService;
+    private final AuthenticationManager authenticationManager;
 
-    public AuthServiceImpl(UsuarioRepository repository, UsuarioMapper mapper) {
+    public AuthServiceImpl(UsuarioRepository repository, UsuarioMapper mapper,
+                           JwtService jwtService, AuthenticationManager authenticationManager) {
         this.repository = repository;
         this.mapper = mapper;
+        this.jwtService = jwtService;
+        this.authenticationManager = authenticationManager;
     }
 
     @Override
@@ -35,12 +43,24 @@ public class AuthServiceImpl implements AuthService {
         if (Boolean.FALSE.equals(entity.getAtivo())) {
             throw new DomainValidationException("Usuário inativo");
         }
-        if (!passwordEncoder.matches(request.getSenha(), entity.getSenha())) {
+
+        Authentication authentication;
+        try {
+            authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(request.getEmail(), request.getSenha())
+            );
+        } catch (AuthenticationException e) {
             throw new DomainValidationException("Credenciais inválidas");
         }
+        if (!authentication.isAuthenticated()) {
+            throw new DomainValidationException("Credenciais inválidas");
+        }
+
         UsuarioResumoResponse resumo = mapper.toResumo(mapper.toDomain(entity));
+        UserDetails principal = (UserDetails) authentication.getPrincipal();
+        String token = jwtService.generateToken(principal);
         return LoginResponse.builder()
-                .token("mock-token") // TODO: gerar JWT na etapa de segurança
+                .token(token)
                 .tipo("Bearer")
                 .usuario(resumo)
                 .build();
