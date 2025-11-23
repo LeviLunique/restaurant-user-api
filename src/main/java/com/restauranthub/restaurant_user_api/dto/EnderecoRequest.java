@@ -1,6 +1,7 @@
 package com.restauranthub.restaurant_user_api.dto;
 
 import com.restauranthub.restaurant_user_api.domain.enums.TipoEndereco;
+
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
@@ -15,6 +16,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class EnderecoRequest {
+
+    private Long id;
 
     @NotNull(message = "tipoEndereco é obrigatório")
     private TipoEndereco tipoEndereco;
@@ -41,4 +44,6 @@ public class EnderecoRequest {
 
     @NotNull(message = "principal deve ser informado")
     private Boolean principal;
+
+    private Boolean ativo;
 }
