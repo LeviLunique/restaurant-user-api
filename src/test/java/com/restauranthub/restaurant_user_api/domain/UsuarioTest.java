@@ -1,13 +1,15 @@
 package com.restauranthub.restaurant_user_api.domain;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import java.util.List;
+
+import org.junit.jupiter.api.Test;
+
 import com.restauranthub.restaurant_user_api.domain.enums.TipoEndereco;
 import com.restauranthub.restaurant_user_api.domain.enums.TipoUsuario;
 import com.restauranthub.restaurant_user_api.exceptions.DomainValidationException;
-import java.util.List;
-import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class UsuarioTest {
 
@@ -22,8 +24,7 @@ class UsuarioTest {
                 "SP",
                 "01001-000",
                 true,
-                true
-        );
+                true);
     }
 
     private Endereco enderecoComercialPrincipalFalse() {
@@ -37,8 +38,7 @@ class UsuarioTest {
                 "SP",
                 "01310-100",
                 false,
-                true
-        );
+                true);
     }
 
     @Test
@@ -51,8 +51,7 @@ class UsuarioTest {
                 "Senha@123",
                 TipoUsuario.CLIENTE,
                 "+55 11 99999-9999",
-                List.of(end)
-        ));
+                List.of(end)));
     }
 
     @Test
@@ -64,15 +63,14 @@ class UsuarioTest {
                 "Senha@123",
                 TipoUsuario.CLIENTE,
                 "+55 11 99999-9999",
-                List.of()
-        ));
+                List.of()));
     }
 
     @Test
     void naoDevePermitirMaisDeUmEnderecoPrincipalAtivo() {
         Endereco end1 = enderecoResidencial();
         Endereco end2 = enderecoComercialPrincipalFalse();
-        end2.setPrincipal(true); // força dois principais
+        end2.setPrincipal(true);
 
         assertThrows(DomainValidationException.class, () -> Usuario.create(
                 "Fulano",
@@ -81,8 +79,7 @@ class UsuarioTest {
                 "Senha@123",
                 TipoUsuario.CLIENTE,
                 "+55 11 99999-9999",
-                List.of(end1, end2)
-        ));
+                List.of(end1, end2)));
     }
 
     @Test
@@ -95,7 +92,6 @@ class UsuarioTest {
                 "curta",
                 TipoUsuario.CLIENTE,
                 "+55 11 99999-9999",
-                List.of(end)
-        ));
+                List.of(end)));
     }
 }
