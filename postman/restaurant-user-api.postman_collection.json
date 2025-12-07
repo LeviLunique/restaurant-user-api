@@ -50,8 +50,10 @@
                   "const json = pm.response.json();",
                   "if (json && json.token) {",
                   "    pm.collectionVariables.set(\"token\", json.token);",
+                  "    pm.environment.set(\"token\", json.token);",
                   "} else {",
                   "    pm.collectionVariables.unset(\"token\");",
+                  "    pm.environment.unset(\"token\");",
                   "}"
                 ]
               }
