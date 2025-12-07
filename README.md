@@ -1,0 +1,91 @@
+# Restaurant User API
+
+API REST para gestão de usuários de restaurantes (cadastro, consulta, atualização, senha e autenticação com JWT), construída para o Tech Challenge FIAP — Fase 1.
+
+## Stack e requisitos
+- Java 25, Maven 3.9+
+- Spring Boot 3.5 (Web, Security, Data JPA, Validation, Actuator)
+- PostgreSQL + Flyway
+- Docker / Docker Compose (execução recomendada)
+- Swagger UI em `/swagger-ui.html`
+
+## Como executar
+### Via Docker Compose (recomendado)
+```bash
+cp .env.example .env   # se existir; caso contrário, use os defaults
+docker-compose up -d
+```
+Aplicação em `http://localhost:8080`.
+
+### Local com Maven
+1) Suba um PostgreSQL local ou via Docker:
+```bash
+docker run -d --name postgres-restaurant \
+  -e POSTGRES_DB=restauranthubdb \
+  -e POSTGRES_USER=restauranthub \
+  -e POSTGRES_PASSWORD=restaurantpwd \
+  -p 5432:5432 postgres:16-alpine
+```
+2) Exporte o JDK 25 e execute:
+```bash
+export JAVA_HOME="$(/usr/libexec/java_home -v 25)"
+export PATH="$JAVA_HOME/bin:$PATH"
+./mvnw spring-boot:run
+```
+
+### Variáveis de ambiente principais
+- `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, `DB_PASSWORD`
+- `SERVER_PORT` (default 8080)
+- `JWT_SECRET` (Base64, 256 bits) e `JWT_EXPIRATION_MS` (default 3600000)
+
+## Endpoints principais (base `/api/v1`)
+- `POST /auth/login` – autentica e retorna JWT.
+- `POST /users` – cria usuário.
+- `GET /users/{id}` – consulta por id.
+- `GET /users` – lista paginada (`page`, `size`, `sort`).
+- `GET /users/search?nome=` – busca por nome.
+- `GET /users/email/{email}` – busca por e-mail.
+- `PUT /users/{id}` – atualiza usuário.
+- `PATCH /users/{id}/password` – altera senha.
+- `DELETE /users/{id}` – desativa usuário.
+- Health: `/actuator/health`
+- Swagger: `/swagger-ui.html`
+
+### Fluxo de autenticação
+1) `POST /auth/login` com email/senha.
+2) Use o token retornado em `Authorization: Bearer <token>` nas demais rotas.
+
+### Usuários seed (Flyway V2/V4)
+- Admin: `admin@restauranthub.com` / `Admin@123`
+- Dono: `roberto.faria@restaurante.com` / `Dono@123` (idem para os demais donos)
+- Cliente: `joao.silva@email.com` / `Cliente@123` (idem demais clientes)
+Usuários podem ser desativados, então valide `ativo=true` se reutilizar seeds.
+
+## Postman
+Coleção pronta em `postman/restaurant-user-api.postman_collection.json`. Importe e:
+1) Rode “Auth > Login (Admin)” para popular `{{token}}`.
+2) Exercite os requests de usuários (já configurados com bearer token).
+
+### Testes automatizados via Newman (Docker)
+Há um script que roda a coleção pelo Newman em container:
+```bash
+# Com o docker compose rodando (recomendado):
+docker-compose up -d
+./scripts/run-postman.sh
+```
+- Se o container `restauranthub-app` estiver ativo, o script descobre a rede do Compose e usa `http://restauranthub-app:8080/api/v1` automaticamente.
+- Para rodar contra outro host/porta, defina `BASE_URL`, ex.: `BASE_URL="http://localhost:8080/api/v1" ./scripts/run-postman.sh`.
+- Em Apple Silicon, para eliminar o aviso de plataforma, use `NEWMAN_PLATFORM=linux/arm64/v8 ./scripts/run-postman.sh`.
+- O login salva o token no ambiente; os demais requests usam o Bearer automaticamente.
+
+## Testes e qualidade
+```bash
+./mvnw test          # executa unit/integration/api slices (H2)
+./mvnw clean test jacoco:report  # gera cobertura em target/site/jacoco/index.html
+```
+Os slices JPA/Controller usam H2 e desabilitam Flyway nas suites específicas; o build completo usa Flyway e PostgreSQL conforme as configs padrão.
+
+## Troubleshooting
+- **Unsupported class version**: garanta `java --version` = 25 e `mvn --version` mostrando o mesmo JDK.
+- **Flyway em testes H2**: já desabilitado em `UsuarioRepositoryTest`; mantenha as props de teste se criar novos slices.
+- **JWT inválido nos testes locais**: use um `JWT_SECRET` Base64 de 32 bytes (ex.: `MTIzNDU2Nzg5MDEyMzQ1Njc4OTAxMjM0NTY3ODkwMTI=`).***
