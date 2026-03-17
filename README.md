@@ -51,6 +51,15 @@ export PATH="$JAVA_HOME/bin:$PATH"
 - Health: `/actuator/health`
 - Swagger: `/swagger-ui.html`
 
+## Modelagem e banco de dados
+- Modelagem das entidades, relacionamento `1:N` entre usuário e endereço e estrutura das tabelas: [docs/modelagem-dados.md](/Users/levilunique/Workspace/Java/FIAP/TechChallenge/challenge1/restaurant-user-api/docs/modelagem-dados.md)
+- Migrations Flyway com schema, índices, constraints e seeds: [src/main/resources/db/migration/MIGRATIONS.md](/Users/levilunique/Workspace/Java/FIAP/TechChallenge/challenge1/restaurant-user-api/src/main/resources/db/migration/MIGRATIONS.md)
+- Script inicial do banco: [src/main/resources/db/migration/V1__create_initial_schema.sql](/Users/levilunique/Workspace/Java/FIAP/TechChallenge/challenge1/restaurant-user-api/src/main/resources/db/migration/V1__create_initial_schema.sql)
+
+## Swagger
+- A documentação em `/swagger-ui.html` agora inclui exemplos de requisição e de respostas de sucesso e erro nos endpoints principais.
+- Os exemplos cobrem cenários como validação de payload, regra de negócio (`Email já cadastrado`) e autenticação.
+
 ### Fluxo de autenticação
 1) `POST /auth/login` com email/senha.
 2) Use o token retornado em `Authorization: Bearer <token>` nas demais rotas.

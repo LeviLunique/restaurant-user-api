@@ -47,6 +47,7 @@ public class UsuarioServiceImpl implements UsuarioService {
     public UsuarioResponse create(UsuarioRequest dto) {
         if (dto == null)
             throw new DomainValidationException("dto não pode ser nulo");
+        normalizarCamposCriacao(dto);
         validarUnicidade(dto.getEmail(), dto.getLogin(), null);
 
         Usuario domain = mapper.toDomain(dto);
@@ -66,11 +67,12 @@ public class UsuarioServiceImpl implements UsuarioService {
             throw new DomainValidationException("usuarioId não pode ser nulo");
         if (dto == null)
             throw new DomainValidationException("dto não pode ser nulo");
+        normalizarCamposAtualizacao(dto);
 
         UsuarioEntity existing = repository.findById(usuarioId)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado com id: " + usuarioId));
 
-        if (dto.getEmail() != null && !dto.getEmail().equalsIgnoreCase(existing.getEmail())) {
+        if (dto.getEmail() != null && !dto.getEmail().equalsIgnoreCase(normalizarTexto(existing.getEmail()))) {
             validarUnicidade(dto.getEmail(), null, usuarioId);
         }
 
@@ -167,6 +169,32 @@ public class UsuarioServiceImpl implements UsuarioService {
                 }
             });
         }
+    }
+
+    private void normalizarCamposCriacao(UsuarioRequest dto) {
+        dto.setNome(normalizarTexto(dto.getNome()));
+        dto.setEmail(normalizarEmail(dto.getEmail()));
+        dto.setLogin(normalizarTexto(dto.getLogin()));
+        dto.setTelefone(normalizarTexto(dto.getTelefone()));
+    }
+
+    private void normalizarCamposAtualizacao(UsuarioUpdateRequest dto) {
+        dto.setNome(normalizarTexto(dto.getNome()));
+        dto.setEmail(normalizarEmail(dto.getEmail()));
+        dto.setTelefone(normalizarTexto(dto.getTelefone()));
+    }
+
+    private String normalizarEmail(String value) {
+        String normalized = normalizarTexto(value);
+        return normalized == null ? null : normalized.toLowerCase();
+    }
+
+    private String normalizarTexto(String value) {
+        if (value == null) {
+            return null;
+        }
+        String normalized = value.trim();
+        return normalized.isEmpty() ? null : normalized;
     }
 
     private Sort resolverSort(String sort) {
