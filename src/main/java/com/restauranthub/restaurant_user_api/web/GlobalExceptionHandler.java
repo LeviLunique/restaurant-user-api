@@ -28,7 +28,7 @@ public class GlobalExceptionHandler {
         ProblemDetail pd = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
         pd.setType(URI.create("https://restauranthub.com/problems/not-found"));
         pd.setTitle("Recurso não encontrado");
-        pd.setProperty("instance", request.getRequestURI());
+        pd.setInstance(URI.create(request.getRequestURI()));
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(pd);
     }
 
@@ -37,7 +37,7 @@ public class GlobalExceptionHandler {
         ProblemDetail pd = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
         pd.setType(URI.create("https://restauranthub.com/problems/domain-validation"));
         pd.setTitle("Erro de validação de domínio");
-        pd.setProperty("instance", request.getRequestURI());
+        pd.setInstance(URI.create(request.getRequestURI()));
         return ResponseEntity.badRequest().body(pd);
     }
 
@@ -53,7 +53,7 @@ public class GlobalExceptionHandler {
         pd.setType(URI.create("https://restauranthub.com/problems/validation-error"));
         pd.setDetail("Dados inválidos");
         pd.setProperty("errors", errors);
-        pd.setProperty("instance", request.getRequestURI());
+        pd.setInstance(URI.create(request.getRequestURI()));
         return ResponseEntity.badRequest().body(pd);
     }
 
@@ -62,7 +62,7 @@ public class GlobalExceptionHandler {
         ProblemDetail pd = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, "Violação de integridade de dados");
         pd.setType(URI.create("https://restauranthub.com/problems/conflict"));
         pd.setTitle("Conflito de dados");
-        pd.setProperty("instance", request.getRequestURI());
+        pd.setInstance(URI.create(request.getRequestURI()));
         log.error("Data integrity violation", ex);
         return ResponseEntity.status(HttpStatus.CONFLICT).body(pd);
     }
@@ -72,7 +72,7 @@ public class GlobalExceptionHandler {
         ProblemDetail pd = ProblemDetail.forStatusAndDetail(HttpStatus.INTERNAL_SERVER_ERROR, "Erro interno do servidor");
         pd.setType(URI.create("https://restauranthub.com/problems/internal-error"));
         pd.setTitle("Erro interno");
-        pd.setProperty("instance", request.getRequestURI());
+        pd.setInstance(URI.create(request.getRequestURI()));
         log.error("Erro interno", ex);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(pd);
     }

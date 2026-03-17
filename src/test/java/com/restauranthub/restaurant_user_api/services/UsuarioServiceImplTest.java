@@ -104,6 +104,21 @@ class UsuarioServiceImplTest {
     }
 
     @Test
+    void update_devePermitirMesmoEmailDoUsuarioComCaseEDelimitadoresDiferentes() {
+        UsuarioEntity existente = TestData.usuarioEntityPersistido();
+        when(repository.findById(1L)).thenReturn(Optional.of(existente));
+        when(repository.saveAndFlush(any(UsuarioEntity.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        UsuarioUpdateRequest update = UsuarioUpdateRequest.builder()
+                .email("  FULANO@EMAIL.COM  ")
+                .build();
+
+        UsuarioResponse response = service.update(1L, update);
+
+        assertEquals("fulano@email.com", response.getEmail());
+    }
+
+    @Test
     void update_deveLancarQuandoNaoEncontrarUsuario() {
         when(repository.findById(99L)).thenReturn(Optional.empty());
 
