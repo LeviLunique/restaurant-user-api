@@ -72,5 +72,5 @@ tmp/
 temp/
 
 # Documentation
-docs/
+requirements/
 *.pdf
