@@ -52,9 +52,9 @@ export PATH="$JAVA_HOME/bin:$PATH"
 - Swagger: `/swagger-ui.html`
 
 ## Modelagem e banco de dados
-- Modelagem das entidades, relacionamento `1:N` entre usuário e endereço e estrutura das tabelas: [docs/modelagem-dados.md](/Users/levilunique/Workspace/Java/FIAP/TechChallenge/challenge1/restaurant-user-api/docs/modelagem-dados.md)
-- Migrations Flyway com schema, índices, constraints e seeds: [src/main/resources/db/migration/MIGRATIONS.md](/Users/levilunique/Workspace/Java/FIAP/TechChallenge/challenge1/restaurant-user-api/src/main/resources/db/migration/MIGRATIONS.md)
-- Script inicial do banco: [src/main/resources/db/migration/V1__create_initial_schema.sql](/Users/levilunique/Workspace/Java/FIAP/TechChallenge/challenge1/restaurant-user-api/src/main/resources/db/migration/V1__create_initial_schema.sql)
+- Modelagem das entidades, relacionamento `1:N` entre usuário e endereço e estrutura das tabelas: [docs/modelagem-dados.md](docs/modelagem-dados.md)
+- Migrations Flyway com schema, índices, constraints e seeds: [src/main/resources/db/migration/MIGRATIONS.md](src/main/resources/db/migration/MIGRATIONS.md)
+- Script inicial do banco: [src/main/resources/db/migration/V1__create_initial_schema.sql](src/main/resources/db/migration/V1__create_initial_schema.sql)
 
 ## Swagger
 - A documentação em `/swagger-ui.html` agora inclui exemplos de requisição e de respostas de sucesso e erro nos endpoints principais.
