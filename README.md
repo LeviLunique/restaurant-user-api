@@ -1,6 +1,6 @@
 # Restaurant User API
 
-API REST para gestão de usuários de restaurantes (cadastro, consulta, atualização, senha e autenticação com JWT), construída para o Tech Challenge FIAP — Fase 1.
+API REST para gestão de usuários de restaurantes, tipos de usuário, cadastro de restaurantes, itens de cardápio, autenticação com JWT e documentação OpenAPI, construída para o Tech Challenge FIAP.
 
 ## Stack e requisitos
 - Java 25, Maven 3.9+
@@ -48,6 +48,16 @@ export PATH="$JAVA_HOME/bin:$PATH"
 - `PUT /users/{id}` – atualiza usuário.
 - `PATCH /users/{id}/password` – altera senha.
 - `DELETE /users/{id}` – desativa usuário.
+- `POST /user-types` – cria tipo de usuário.
+- `GET /user-types` – lista tipos de usuário.
+- `PUT /user-types/{typeId}/users/{userId}` – associa um tipo a um usuário existente.
+- `POST /restaurants` – cria restaurante.
+- `GET /restaurants` – lista restaurantes.
+- `PUT /restaurants/{id}` – atualiza restaurante.
+- `POST /restaurants/{restaurantId}/menu-items` – cria item de cardápio.
+- `GET /restaurants/{restaurantId}/menu-items` – lista itens do cardápio por restaurante.
+- `PUT /menu-items/{id}` – atualiza item de cardápio.
+- `DELETE /menu-items/{id}` – remove item de cardápio.
 - Health: `/actuator/health`
 - Swagger: `/swagger-ui.html`
 
@@ -55,6 +65,7 @@ export PATH="$JAVA_HOME/bin:$PATH"
 - Modelagem das entidades, relacionamento `1:N` entre usuário e endereço e estrutura das tabelas: [docs/modelagem-dados.md](docs/modelagem-dados.md)
 - Migrations Flyway com schema, índices, constraints e seeds: [src/main/resources/db/migration/MIGRATIONS.md](src/main/resources/db/migration/MIGRATIONS.md)
 - Script inicial do banco: [src/main/resources/db/migration/V1__create_initial_schema.sql](src/main/resources/db/migration/V1__create_initial_schema.sql)
+- Expansão da fase 2 com catálogo de tipos de usuário, restaurantes e itens de cardápio: [src/main/resources/db/migration/V5__add_phase_2_modules.sql](src/main/resources/db/migration/V5__add_phase_2_modules.sql)
 
 ## Swagger
 - A documentação em `/swagger-ui.html` agora inclui exemplos de requisição e de respostas de sucesso e erro nos endpoints principais.
@@ -70,10 +81,20 @@ export PATH="$JAVA_HOME/bin:$PATH"
 - Cliente: `joao.silva@email.com` / `Cliente@123` (idem demais clientes)
 Usuários podem ser desativados, então valide `ativo=true` se reutilizar seeds.
 
+### Dados seed da fase 2 (Flyway V5)
+- Tipos de usuário cadastrados: `ADMIN`, `DONO_RESTAURANTE`, `CLIENTE`, `FUNCIONARIO`.
+- Restaurantes seed:
+  - `Cantina do Roberto`
+  - `Bistrô da Márcia`
+- Itens seed:
+  - `Lasanha da Casa`
+  - `Tiramisù Tradicional`
+  - `Risoto de Cogumelos`
+
 ## Postman
 Coleção pronta em `postman/restaurant-user-api.postman_collection.json`. Importe e:
 1) Rode “Auth > Login (Admin)” para popular `{{token}}`.
-2) Exercite os requests de usuários (já configurados com bearer token).
+2) Exercite os requests de usuários, tipos de usuário, restaurantes e cardápio (já configurados com bearer token).
 
 ### Testes automatizados via Newman (Docker)
 Há um script que roda a coleção pelo Newman em container:

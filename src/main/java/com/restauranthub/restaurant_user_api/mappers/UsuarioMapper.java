@@ -54,6 +54,8 @@ public class UsuarioMapper {
         u.setLogin(entity.getLogin());
         u.setSenha(entity.getSenha());
         u.setTipoUsuario(entity.getTipoUsuario());
+        u.setTipoUsuarioId(entity.getTipoUsuarioCadastro() == null ? null : entity.getTipoUsuarioCadastro().getId());
+        u.setTipoUsuarioNome(entity.getTipoUsuarioCadastro() == null ? entity.getTipoUsuario().name() : entity.getTipoUsuarioCadastro().getNome());
         u.setTelefone(entity.getTelefone());
         u.setAtivo(entity.getAtivo());
         u.setCreatedAt(entity.getCreatedAt());
@@ -136,6 +138,8 @@ public class UsuarioMapper {
         r.setNome(domain.getNome());
         r.setEmail(domain.getEmail());
         r.setLogin(domain.getLogin());
+        r.setTipoUsuarioId(domain.getTipoUsuarioId());
+        r.setTipoUsuarioNome(domain.getTipoUsuarioNome());
         r.setTipoUsuario(domain.getTipoUsuario());
         r.setTelefone(domain.getTelefone());
         r.setAtivo(domain.getAtivo());
@@ -155,6 +159,8 @@ public class UsuarioMapper {
         r.setId(domain.getId());
         r.setNome(domain.getNome());
         r.setEmail(domain.getEmail());
+        r.setTipoUsuarioId(domain.getTipoUsuarioId());
+        r.setTipoUsuarioNome(domain.getTipoUsuarioNome());
         r.setTipoUsuario(domain.getTipoUsuario());
         r.setAtivo(domain.getAtivo());
         return r;

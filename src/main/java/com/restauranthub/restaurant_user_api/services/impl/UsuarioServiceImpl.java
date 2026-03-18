@@ -25,6 +25,7 @@ import com.restauranthub.restaurant_user_api.entities.UsuarioEntity;
 import com.restauranthub.restaurant_user_api.exceptions.DomainValidationException;
 import com.restauranthub.restaurant_user_api.exceptions.ResourceNotFoundException;
 import com.restauranthub.restaurant_user_api.mappers.UsuarioMapper;
+import com.restauranthub.restaurant_user_api.repositories.TipoUsuarioCadastroRepository;
 import com.restauranthub.restaurant_user_api.repositories.UsuarioRepository;
 import com.restauranthub.restaurant_user_api.services.UsuarioService;
 
@@ -34,11 +35,13 @@ public class UsuarioServiceImpl implements UsuarioService {
     private static final Logger log = LoggerFactory.getLogger(UsuarioServiceImpl.class);
 
     private final UsuarioRepository repository;
+    private final TipoUsuarioCadastroRepository tipoUsuarioCadastroRepository;
     private final UsuarioMapper mapper;
     private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-    public UsuarioServiceImpl(UsuarioRepository repository, UsuarioMapper mapper) {
+    public UsuarioServiceImpl(UsuarioRepository repository, TipoUsuarioCadastroRepository tipoUsuarioCadastroRepository, UsuarioMapper mapper) {
         this.repository = repository;
+        this.tipoUsuarioCadastroRepository = tipoUsuarioCadastroRepository;
         this.mapper = mapper;
     }
 
@@ -55,6 +58,7 @@ public class UsuarioServiceImpl implements UsuarioService {
         domain.setSenha(passwordEncoder.encode(domain.getSenha()));
 
         UsuarioEntity entity = mapper.toEntity(domain);
+        sincronizarTipoUsuario(entity);
         UsuarioEntity saved = repository.saveAndFlush(entity);
         log.info("Usuário criado id={}", saved.getId());
         return mapper.toResponse(mapper.toDomain(saved));
@@ -80,6 +84,7 @@ public class UsuarioServiceImpl implements UsuarioService {
         mapper.updateDomainFromDto(dto, domain);
 
         mapper.updateEntityFromDomain(domain, existing);
+        sincronizarTipoUsuario(existing);
         UsuarioEntity saved = repository.saveAndFlush(existing);
         return mapper.toResponse(mapper.toDomain(saved));
     }
@@ -195,6 +200,14 @@ public class UsuarioServiceImpl implements UsuarioService {
         }
         String normalized = value.trim();
         return normalized.isEmpty() ? null : normalized;
+    }
+
+    private void sincronizarTipoUsuario(UsuarioEntity entity) {
+        if (entity.getTipoUsuario() == null) {
+            return;
+        }
+        tipoUsuarioCadastroRepository.findByNomeIgnoreCase(entity.getTipoUsuario().name())
+                .ifPresent(entity::setTipoUsuarioCadastro);
     }
 
     private Sort resolverSort(String sort) {

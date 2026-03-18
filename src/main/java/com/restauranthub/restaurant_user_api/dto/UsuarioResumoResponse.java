@@ -14,6 +14,8 @@ public class UsuarioResumoResponse {
     private Long id;
     private String nome;
     private String email;
+    private Long tipoUsuarioId;
+    private String tipoUsuarioNome;
     private TipoUsuario tipoUsuario;
     private Boolean ativo;
 }
