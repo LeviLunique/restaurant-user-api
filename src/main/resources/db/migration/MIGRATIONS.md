@@ -83,6 +83,44 @@ Este diretório contém os scripts de migração do banco de dados usando Flyway
 - `v_usuarios_detalhes`: Detalhes dos usuários com endereço principal (sem senha)
 - `v_usuarios_enderecos`: Relação completa de usuários e todos seus endereços ativos
 
+### V5__add_phase_2_modules.sql
+**Descrição**: Expande a solução para a fase 2 com catálogo de tipos de usuário, restaurantes e itens de cardápio
+
+**Estrutura**:
+
+#### Tabela TIPO_USUARIO_CADASTRO
+- Catálogo persistido de tipos de usuário
+- Campos: `nome`, `descricao`, `ativo`, datas
+- Seeds iniciais:
+  - `ADMIN`
+  - `DONO_RESTAURANTE`
+  - `CLIENTE`
+  - `FUNCIONARIO`
+
+#### Alteração na tabela USUARIO
+- Novo campo `tipo_usuario_cadastro_id`
+- Associação `N:1` entre `usuario` e `tipo_usuario_cadastro`
+- Migração popula automaticamente o vínculo com base no enum `tipo_usuario`
+
+#### Tabela RESTAURANTE
+- Cadastro principal do restaurante
+- Campos: `nome`, `tipo_cozinha`, `horario_funcionamento`, endereço e `dono_usuario_id`
+- Regra: o dono deve ser um usuário do tipo `DONO_RESTAURANTE`
+
+#### Tabela ITEM_CARDAPIO
+- Itens vendidos pelo restaurante
+- Campos: `nome`, `descricao`, `preco`, `apenas_no_local`, `caminho_foto`, `ativo`
+- Relacionamento `N:1` com `restaurante`
+
+#### Seeds da fase 2
+- Restaurantes:
+  - `Cantina do Roberto`
+  - `Bistrô da Márcia`
+- Itens:
+  - `Lasanha da Casa`
+  - `Tiramisù Tradicional`
+  - `Risoto de Cogumelos`
+
 ## 🔐 Credenciais de Teste
 
 ### Admin
@@ -162,6 +200,8 @@ As migrations são executadas automaticamente pelo Flyway quando a aplicação i
 1. V1 - Cria as tabelas e estruturas
 2. V2 - Insere dados iniciais
 3. V3 - Cria views e estatísticas
+4. V4 - Atualiza os hashes das senhas seed
+5. V5 - Cria o catálogo de tipos de usuário, restaurantes e itens de cardápio
 
 ### Verificar migrations aplicadas:
 ```sql

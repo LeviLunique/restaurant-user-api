@@ -1,11 +1,8 @@
 package com.restauranthub.restaurant_user_api.entities;
 
-import com.restauranthub.restaurant_user_api.domain.enums.TipoUsuario;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -28,37 +25,48 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Setter
 @ToString(onlyExplicitlyIncluded = true)
 @Entity
-@Table(name = "usuario")
+@Table(name = "restaurante")
 @jakarta.persistence.EntityListeners(AuditingEntityListener.class)
-public class UsuarioEntity {
+public class RestauranteEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @ToString.Include
     private Long id;
 
-    @Column(nullable = false, length = 100)
+    @Column(nullable = false, length = 120)
     private String nome;
 
-    @Column(nullable = false, length = 100, unique = true)
-    private String email;
+    @Column(name = "tipo_cozinha", nullable = false, length = 80)
+    private String tipoCozinha;
 
-    @Column(nullable = false, length = 50, unique = true)
-    private String login;
-
-    @Column(nullable = false, length = 255)
-    private String senha;
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = "tipo_usuario", nullable = false, length = 20)
-    private TipoUsuario tipoUsuario;
+    @Column(name = "horario_funcionamento", nullable = false, length = 120)
+    private String horarioFuncionamento;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "tipo_usuario_cadastro_id")
-    private TipoUsuarioCadastroEntity tipoUsuarioCadastro;
+    @JoinColumn(name = "dono_usuario_id", nullable = false)
+    private UsuarioEntity dono;
+
+    @Column(nullable = false, length = 255)
+    private String rua;
 
     @Column(length = 20)
-    private String telefone;
+    private String numero;
+
+    @Column(length = 100)
+    private String complemento;
+
+    @Column(length = 100)
+    private String bairro;
+
+    @Column(nullable = false, length = 100)
+    private String cidade;
+
+    @Column(length = 2)
+    private String estado;
+
+    @Column(nullable = false, length = 10)
+    private String cep;
 
     @Column(nullable = false)
     private Boolean ativo = Boolean.TRUE;
@@ -71,11 +79,6 @@ public class UsuarioEntity {
     @Column(name = "data_atualizacao", nullable = false)
     private Instant updatedAt;
 
-    @OneToMany(
-            mappedBy = "usuario",
-            cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE},
-            orphanRemoval = true,
-            fetch = FetchType.LAZY
-    )
-    private List<EnderecoEntity> enderecos = new ArrayList<>();
+    @OneToMany(mappedBy = "restaurante", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<ItemCardapioEntity> itensCardapio = new ArrayList<>();
 }

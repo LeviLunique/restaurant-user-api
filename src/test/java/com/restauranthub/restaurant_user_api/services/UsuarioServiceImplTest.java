@@ -21,6 +21,7 @@ import com.restauranthub.restaurant_user_api.exceptions.DomainValidationExceptio
 import com.restauranthub.restaurant_user_api.exceptions.ResourceNotFoundException;
 import com.restauranthub.restaurant_user_api.mappers.EnderecoMapper;
 import com.restauranthub.restaurant_user_api.mappers.UsuarioMapper;
+import com.restauranthub.restaurant_user_api.repositories.TipoUsuarioCadastroRepository;
 import com.restauranthub.restaurant_user_api.repositories.UsuarioRepository;
 import com.restauranthub.restaurant_user_api.services.impl.UsuarioServiceImpl;
 import java.util.List;
@@ -39,12 +40,16 @@ class UsuarioServiceImplTest {
     @Mock
     private UsuarioRepository repository;
 
+    @Mock
+    private TipoUsuarioCadastroRepository tipoUsuarioCadastroRepository;
+
     private UsuarioServiceImpl service;
 
     @BeforeEach
     void setup() {
         MockitoAnnotations.openMocks(this);
-        service = new UsuarioServiceImpl(repository, new UsuarioMapper(new EnderecoMapper()));
+        when(tipoUsuarioCadastroRepository.findByNomeIgnoreCase(any())).thenReturn(Optional.empty());
+        service = new UsuarioServiceImpl(repository, tipoUsuarioCadastroRepository, new UsuarioMapper(new EnderecoMapper()));
     }
 
     @Test
