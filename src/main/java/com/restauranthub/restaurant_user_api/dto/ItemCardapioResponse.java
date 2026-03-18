@@ -1,8 +1,7 @@
 package com.restauranthub.restaurant_user_api.dto;
 
-import com.restauranthub.restaurant_user_api.domain.enums.TipoUsuario;
+import java.math.BigDecimal;
 import java.time.OffsetDateTime;
-import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,16 +11,15 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UsuarioResponse {
+public class ItemCardapioResponse {
     private Long id;
+    private Long restauranteId;
+    private String restauranteNome;
     private String nome;
-    private String email;
-    private String login;
-    private Long tipoUsuarioId;
-    private String tipoUsuarioNome;
-    private TipoUsuario tipoUsuario;
-    private String telefone;
-    private List<EnderecoResponse> enderecos;
+    private String descricao;
+    private BigDecimal preco;
+    private Boolean apenasNoLocal;
+    private String caminhoFoto;
     private Boolean ativo;
     private OffsetDateTime dataCriacao;
     private OffsetDateTime dataAtualizacao;

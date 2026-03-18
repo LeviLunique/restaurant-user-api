@@ -29,6 +29,8 @@ public class Usuario {
     private String login;
     private String senha;
     private TipoUsuario tipoUsuario;
+    private Long tipoUsuarioId;
+    private String tipoUsuarioNome;
     private String telefone;
     private List<Endereco> enderecos = new ArrayList<>();
     private Boolean ativo;
